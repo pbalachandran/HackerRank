@@ -1,4 +1,4 @@
-package com.hackerrank.queue;
+package com.hackerrank.taleoftwostacks;
 
 import java.util.*;
 
