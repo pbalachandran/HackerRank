@@ -12,56 +12,48 @@ import java.util.Stack;
 public class Solution {
 
     private static List<Character> leftBrackets = Arrays.asList('{', '(', '[');
+    private static List<Character> rightBrackets = Arrays.asList('}', ')', ']');
 
     // Complete the isBalanced function below.
     static String isBalanced(String s) {
-
-        boolean isLeft = false;
-        boolean isRight = false;
-
-
         Stack<Character> leftStack = new Stack<>();
         Stack<Character> rightStack = new Stack<>();
 
         char[] brackets = s.toCharArray();
         for(char bracket: brackets) {
             if (leftBrackets.contains(bracket)) {
-                if (isRight != false) {
-                    return "NO";
-                }
-                isLeft = true;
-                isRight = false;
                 leftStack.push(bracket);
             } else {
-                if (isLeft != true) {
-                    return "NO";
-                }
-                isLeft = false;
-                isRight = true;
                 rightStack.push(bracket);
             }
-        }
 
-        Stack<Character> rightInvertedStack = new Stack<>();
-
-        Iterator<Character> iter = rightStack.iterator();
-        while(iter.hasNext()) {
-            rightInvertedStack.push(rightStack.pop());
-        }
-
-        if (leftStack.size() != rightInvertedStack.size()) {
-            return "NO";
-        } else {
-            Iterator<Character> leftIter = leftStack.iterator();
-            Iterator<Character> rightInvertedIter = rightInvertedStack.iterator();
-
-            while(leftIter.hasNext() && rightInvertedIter.hasNext()) {
-                if (!isComplement(leftStack.pop(), rightInvertedStack.pop())) {
-                    return "NO";
-                }
+            if (!isBalanced(leftStack, rightStack)) {
+                return "NO";
             }
         }
+
+        if (!leftStack.isEmpty() || !rightStack.isEmpty()) {
+            return "NO";
+        }
+
         return "YES";
+    }
+
+    public static boolean isBalanced(Stack<Character> leftStack, Stack<Character> rightStack) {
+        Character left = !leftStack.isEmpty() ? leftStack.peek() : null;
+        Character right = !rightStack.isEmpty() ? rightStack.peek() : null;
+
+        if (left != null & right != null) {
+            if (isComplement(leftStack.peek(), rightStack.peek())) {
+                leftStack.pop();
+                rightStack.pop();
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
     private static boolean isComplement(Character left, Character right) {
