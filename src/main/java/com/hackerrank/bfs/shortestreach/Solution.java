@@ -60,7 +60,7 @@ public class Solution {
 
         private int findEdgeWeight(Node parent, Node child) {
             Edge e = findEdge(parent, child);
-            return e != null ? e.weight : 0;
+            return e.weight;
         }
 
         private Edge findEdge(Node parent, Node child) {
