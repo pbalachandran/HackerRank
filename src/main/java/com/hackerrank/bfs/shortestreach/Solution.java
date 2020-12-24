@@ -107,10 +107,16 @@ public class Solution {
         }
 
         private List<Node> findChildren(Node parent) {
-            return parent.children
+            List<Node> children = new ArrayList<>();
+            parent.children
                     .stream()
-                    .filter(c -> !c.isVisited)
-                    .collect(Collectors.toList());
+                    .forEach(c -> {
+                        if (!c.isVisited) {
+                            children.add(c);
+                            c.isVisited = false;
+                        }
+                    });
+            return children;
         }
     }
 
