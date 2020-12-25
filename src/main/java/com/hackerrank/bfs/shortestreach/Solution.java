@@ -18,6 +18,19 @@ public class Solution {
             public Node(int value) {
                 this.value = value;
             }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                Node node = (Node) o;
+                return value == node.value;
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(value);
+            }
         }
 
         public static class Edge {
@@ -29,6 +42,21 @@ public class Solution {
                 this.u = u;
                 this.v = v;
                 this.weight = weight;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                Edge edge = (Edge) o;
+                return weight == edge.weight &&
+                        u.equals(edge.u) &&
+                        v.equals(edge.v);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(u, v, weight);
             }
         }
 
@@ -43,11 +71,14 @@ public class Solution {
             Node u = findNodeWithValue(first);
             Node v = findNodeWithValue(second);
 
-            edges.add(new Edge(u, v, 6));
-            edges.add(new Edge(v, u, 6));
+            Edge e = findEdge(u, v);
+            if (e == null) {
+                edges.add(new Edge(u, v, 6));
+                edges.add(new Edge(v, u, 6));
 
-            u.children.add(v);
-            v.children.add(u);
+                u.children.add(v);
+                v.children.add(u);
+            }
         }
 
         private Node findNodeWithValue(int value) {
@@ -94,8 +125,7 @@ public class Solution {
                 Iterator<Node> iterator = children.iterator();
                 while (iterator.hasNext()) {
                     Node child = iterator.next();
-                    int distanceFromOrigin =
-                            parent.distanceFromOrigin + findEdgeWeight(parent, child);
+                    int distanceFromOrigin = parent.distanceFromOrigin + 6;
                     if (child.distanceFromOrigin == 0) {
                         child.distanceFromOrigin = distanceFromOrigin;
                     } else if (distanceFromOrigin < child.distanceFromOrigin) {
@@ -108,14 +138,13 @@ public class Solution {
 
         private List<Node> findChildren(Node parent) {
             List<Node> children = new ArrayList<>();
-            parent.children
-                    .stream()
-                    .forEach(c -> {
-                        if (!c.isVisited) {
-                            children.add(c);
-                            c.isVisited = false;
-                        }
-                    });
+            for (int i = 0; i < parent.children.size(); i++) {
+                Node c = parent.children.get(i);
+                if (!c.isVisited) {
+                    children.add(c);
+                    c.isVisited = false;
+                }
+            }
             return children;
         }
     }
