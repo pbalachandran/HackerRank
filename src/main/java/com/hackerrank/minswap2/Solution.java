@@ -10,6 +10,8 @@ public class Solution {
     private static final Scanner scanner = new Scanner(System.in);
 
     // Complete the minimumSwaps function below.
+    // They key takeaway is that input array has consecutive numbers (in random order)
+    // meaning you can move a number to the index represented by its value
     static int minimumSwaps(int[] arr) {
         int swaps = 0;
         boolean done = false;
