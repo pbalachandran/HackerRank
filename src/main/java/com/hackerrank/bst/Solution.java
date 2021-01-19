@@ -1,4 +1,4 @@
-package com.hackerrank.heightandnodecountbinarytree;
+package com.hackerrank.bst;
 
 import java.util.Scanner;
 
@@ -17,7 +17,6 @@ class Node {
 class Solution {
 
     public static int height(Node root) {
-        // Write your code here.
         return computeHeight(root) - 1;
     }
 
