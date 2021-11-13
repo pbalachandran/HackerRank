@@ -15,7 +15,6 @@ import static java.util.stream.Collectors.toList;
 
 public class Solution {
 
-
     static long countTriplets(List<Long> arr, long r) {
         List<Long> list = new ArrayList<>();
         for (Long element : arr) {
