@@ -13,14 +13,6 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 class Result {
-
-    /*
-     * Complete the 'reverseArray' function below.
-     *
-     * The function is expected to return an INTEGER_ARRAY.
-     * The function accepts INTEGER_ARRAY a as parameter.
-     */
-
     public static List<Integer> reverseArray(List<Integer> list) {
         int len = list.size();
         for(int i=0; i< len/2;i++) {
