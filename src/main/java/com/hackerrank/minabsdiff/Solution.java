@@ -1,0 +1,64 @@
+package com.hackerrank.minabsdiff;
+
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+class Result {
+
+    public static int minimumAbsoluteDifference(List<Integer> arr) {
+        Integer[] sortedArray = arr.toArray(new Integer[arr.size()]);
+        Arrays.sort(sortedArray);
+
+        int minAbsDiff = 0, diff = 0;
+        for (int i = 0; i < sortedArray.length - 1; i++) {
+
+            int first = sortedArray[i];
+            int second = sortedArray[i + 1];
+
+            if (i == 0) {
+                minAbsDiff = Math.abs(first - second);
+            } else {
+                diff = Math.abs(first - second);
+                if (diff < minAbsDiff) {
+                    minAbsDiff = diff;
+                }
+            }
+            if (minAbsDiff == 0) {
+                return minAbsDiff;
+            }
+
+        }
+        return minAbsDiff;
+    }
+}
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        int n = Integer.parseInt(bufferedReader.readLine().trim());
+
+        List<Integer> arr = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+                .map(Integer::parseInt)
+                .collect(toList());
+
+        int result = Result.minimumAbsoluteDifference(arr);
+
+        bufferedWriter.write(String.valueOf(result));
+        bufferedWriter.newLine();
+
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
+}
