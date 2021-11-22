@@ -9,50 +9,52 @@ import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.regex.*;
 import java.util.stream.*;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
+
+import static java.util.stream.Collectors.*;
 
 class Result {
-
-    /*
-     * Complete the 'poisonousPlants' function below.
-     *
-     * The function is expected to return an INTEGER.
-     * The function accepts INTEGER_ARRAY p as parameter.
-     */
-
     public static int poisonousPlants(List<Integer> p) {
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
-        pq.addAll(p);
-        return filterPlants(p);
+        Stack<Integer> living = new Stack<>();
+        living.addAll(p);
+        return filterPlants(living);
     }
 
-    public static int filterPlants(List<Integer> plants) {
-        PriorityQueue<Integer> priorityQueue = new PriorityQueue<>();
-        plants.forEach(plant -> priorityQueue.add(plant));
+    public static int filterPlants(Stack<Integer> living) {
+        int days = 1;
 
-        boolean isIgnore = false;
-        Integer next;
-        PriorityQueue<Integer> alive = new PriorityQueue<>();
-        Integer current = priorityQueue.remove();
-        while(!priorityQueue.isEmpty()) {
-            next = priorityQueue.peek();
+        while (true) {
+            boolean isModified = false;
+            Stack<Integer> alive = new Stack<>();
 
-            if (current > next) {
-                if (!isIgnore) {
-                    alive.add(current);
+            Integer next;
+            Integer current = living.pop();
+            while (!living.isEmpty()) {
+                next = living.pop();
+                if (current <= next) {
+                    alive.push(current);
+                } else {
+                    isModified = true;
                 }
-                alive.add(next);
-            } else {
-                alive.add(current);
-                isIgnore = true;
+                current = next;
             }
-            current = next;
+            alive.push(current);
+            living = reverse(alive);
+            if (!isModified) {
+                break;
+            } else {
+                days++;
+            }
         }
+        return days;
+    }
 
-
-
-        return 0;
+    public static Stack<Integer> reverse(Stack<Integer> original) {
+        Stack<Integer> reversed = new Stack<>();
+        while (!original.isEmpty()) {
+            reversed.push(original.pop());
+        }
+        original = reversed;
+        return original;
     }
 }
 
