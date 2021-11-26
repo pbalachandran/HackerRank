@@ -20,7 +20,7 @@ class Result {
     }
 
     public static int filterPlants(Stack<Integer> living) {
-        int days = 1;
+        int days = 0;
 
         while (true) {
             boolean isModified = false;
