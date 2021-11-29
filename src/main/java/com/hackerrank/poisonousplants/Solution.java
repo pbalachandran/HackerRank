@@ -14,47 +14,37 @@ import static java.util.stream.Collectors.*;
 
 class Result {
     public static int poisonousPlants(List<Integer> p) {
-        Stack<Integer> living = new Stack<>();
+        LinkedList<Integer> living = new LinkedList<>();
         living.addAll(p);
         return filterPlants(living);
     }
 
-    public static int filterPlants(Stack<Integer> living) {
+    public static int filterPlants(LinkedList<Integer> living) {
         int days = 0;
-
         while (true) {
             boolean isModified = false;
-            Stack<Integer> alive = new Stack<>();
+            LinkedList<Integer> alive = new LinkedList<>();
 
-            Integer next;
-            Integer current = living.pop();
+            Integer current = living.remove();
+            alive.add(current);
             while (!living.isEmpty()) {
-                next = living.pop();
-                if (current <= next) {
-                    alive.push(current);
+                Integer next = living.remove();
+                if (current >= next) {
+                    alive.add(next);
                 } else {
                     isModified = true;
                 }
                 current = next;
             }
-            alive.push(current);
-            living = reverse(alive);
+
             if (!isModified) {
                 break;
             } else {
                 days++;
+                living = alive;
             }
         }
         return days;
-    }
-
-    public static Stack<Integer> reverse(Stack<Integer> original) {
-        Stack<Integer> reversed = new Stack<>();
-        while (!original.isEmpty()) {
-            reversed.push(original.pop());
-        }
-        original = reversed;
-        return original;
     }
 }
 
