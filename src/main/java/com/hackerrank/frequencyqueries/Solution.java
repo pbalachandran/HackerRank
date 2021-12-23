@@ -9,23 +9,29 @@ import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.regex.*;
 import java.util.stream.*;
+
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 public class Solution {
 
-    private static Map<Integer,Integer> map;
+    private enum OPERATION {
+        ADD,
+        REMOVE
+    }
 
-    private static void mapIt(List<Integer> list) {
-        map = new HashMap<>();
-        list.stream().forEach(element -> {
-            if (map.keySet().contains(element)) {
-                int count = map.get(element);
-                map.put(element, count + 1);
-            } else {
-                map.put(element, 1);
+    private static Map<Integer, Integer> map = new HashMap<>();
+
+    private static void mapIt(Integer element, OPERATION operation) {
+        int delta = operation == OPERATION.ADD ? 1 : -1;
+        if (map.keySet().contains(element)) {
+            int count = map.get(element);
+            map.put(element, count + delta);
+        } else {
+            if (operation == OPERATION.ADD) {
+                map.put(element, delta);
             }
-        });
+        }
     }
 
     // Complete the freqQuery function below.
@@ -38,7 +44,6 @@ public class Solution {
             Integer operation = query.get(0);
 
             if (operation.equals(3)) {
-                mapIt(elements);
                 Integer frequency = query.get(1);
                 if (map.values().contains(frequency)) {
                     frequencies.add(1);
@@ -49,8 +54,10 @@ public class Solution {
                 Integer element = query.get(1);
                 if (operation.equals(1)) {
                     elements.add(element);
+                    mapIt(element, OPERATION.ADD);
                 } else if (operation.equals(2)) {
                     elements.remove(element);
+                    mapIt(element, OPERATION.REMOVE);
                 }
             }
         });
