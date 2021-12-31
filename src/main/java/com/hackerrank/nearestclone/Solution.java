@@ -1,7 +1,5 @@
 package com.hackerrank.nearestclone;
 
-import sun.jvm.hotspot.gc.shared.Generation;
-
 import java.io.*;
 import java.util.*;
 
