@@ -1,6 +1,7 @@
 package com.hackerrank.bfs.shortestreach;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Solution {
     public static class Graph {
@@ -13,6 +14,7 @@ public class Solution {
             public int distanceFromOrigin = -1;
             public boolean isVisited = false;
             public List<Node> children = new ArrayList<>();
+            public List<Node> visitedChildren = new ArrayList<>();
 
             public Node(int value) {
                 this.value = value;
@@ -153,7 +155,6 @@ public class Solution {
                 Node c = parent.children.get(i);
                 if (!c.isVisited) {
                     children.add(c);
-                    c.isVisited = false;
                 }
             }
             return children;
