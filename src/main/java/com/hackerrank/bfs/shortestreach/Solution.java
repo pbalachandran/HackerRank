@@ -1,7 +1,6 @@
 package com.hackerrank.bfs.shortestreach;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Solution {
     public static class Graph {
@@ -9,9 +8,9 @@ public class Solution {
         public List<Node> nodes = new ArrayList<>();
         public List<Edge> edges = new ArrayList<>();
 
-        public static class Node {
+        public static class Node implements Comparable<Node> {
             public int value;
-            public int distanceFromOrigin;
+            public int distanceFromOrigin = -1;
             public boolean isVisited = false;
             public List<Node> children = new ArrayList<>();
 
@@ -30,6 +29,11 @@ public class Solution {
             @Override
             public int hashCode() {
                 return Objects.hash(value);
+            }
+
+            @Override
+            public int compareTo(Node that) {
+                return Integer.valueOf(this.value).compareTo(Integer.valueOf(that.value));
             }
         }
 
@@ -62,7 +66,7 @@ public class Solution {
 
         public Graph(int size) {
             this.nodeCount = size;
-            for (int i = 0; i < nodeCount; i++) {
+            for (int i = 1; i <= nodeCount; i++) {
                 nodes.add(new Node(i));
             }
         }
@@ -103,36 +107,43 @@ public class Solution {
         }
 
         public int[] shortestReach(int nodeValue) {
-            Node parent = findNodeWithValue(nodeValue);
-            setShortestReaches(parent);
+            Node origin = findNodeWithValue(nodeValue);
+            setShortestReaches(origin);
 
             List<Integer> shortestReaches = new ArrayList<>();
             for (int i = 0; i < nodes.size(); i++) {
                 Node node = nodes.get(i);
-                if (node.value != nodeValue && node.distanceFromOrigin == 0) {
-                    node.distanceFromOrigin = -1;
+                if (node.value != nodeValue) {
+                    shortestReaches.add(node.distanceFromOrigin);
                 }
-                shortestReaches.add(node.distanceFromOrigin);
             }
             return shortestReaches.stream().mapToInt(Integer::intValue).toArray();
         }
 
-        private void setShortestReaches(Node parent) {
-            parent.isVisited = true;
-            List<Node> children = findChildren(parent);
+        private void setShortestReaches(Node origin) {
+            PriorityQueue<Node> pq = new PriorityQueue<>();
 
-            if (!children.isEmpty()) {
-                Iterator<Node> iterator = children.iterator();
-                while (iterator.hasNext()) {
-                    Node child = iterator.next();
-                    int distanceFromOrigin = parent.distanceFromOrigin + 6;
-                    if (child.distanceFromOrigin == 0) {
-                        child.distanceFromOrigin = distanceFromOrigin;
-                    } else if (distanceFromOrigin < child.distanceFromOrigin) {
-                        child.distanceFromOrigin = distanceFromOrigin;
+            pq.add(origin);
+
+            int distanceFromOrigin = 0;
+
+            while (true) {
+                List<Node> children = new ArrayList<>();
+                while (!pq.isEmpty()) {
+                    Node node = pq.remove();
+                    if (!node.isVisited) {
+                        node.distanceFromOrigin = distanceFromOrigin;
+                        node.isVisited = true;
                     }
-                    setShortestReaches(child);
+                    children.addAll(findChildren(node));
                 }
+
+                if (children.isEmpty()) {
+                    break;
+                }
+
+                distanceFromOrigin += 6;
+                pq.addAll(children);
             }
         }
 
@@ -158,26 +169,24 @@ public class Solution {
 
             // Create a graph of size n where each edge weight is 6:
             Graph graph = new Graph(scanner.nextInt());
-            int m = scanner.nextInt();
 
             // read and set edges
-            for (int i = 0; i < m; i++) {
-                int u = scanner.nextInt() - 1;
-                int v = scanner.nextInt() - 1;
+            int m = scanner.nextInt();
+            for (int i = 1; i <= m; i++) {
+                int u = scanner.nextInt();
+                int v = scanner.nextInt();
 
                 // add each edge to the graph
                 graph.addEdge(u, v);
             }
 
             // Find shortest reach from node s
-            int startId = scanner.nextInt() - 1;
+            int startId = scanner.nextInt();
             int[] distances = graph.shortestReach(startId);
 
             for (int i = 0; i < distances.length; i++) {
-                if (i != startId) {
-                    System.out.print(distances[i]);
-                    System.out.print(" ");
-                }
+                System.out.print(distances[i]);
+                System.out.print(" ");
             }
             System.out.println();
         }
