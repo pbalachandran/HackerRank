@@ -1,7 +1,6 @@
 package com.hackerrank.bfs.shortestreach;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Solution {
     public static class Graph {
@@ -9,12 +8,13 @@ public class Solution {
         public List<Node> nodes = new ArrayList<>();
         public List<Edge> edges = new ArrayList<>();
 
+        public Map<String, Edge> edgeMap = new HashMap<>();
+
         public static class Node implements Comparable<Node> {
             public int value;
             public int distanceFromOrigin = -1;
             public boolean isVisited = false;
             public List<Node> children = new ArrayList<>();
-            public List<Node> visitedChildren = new ArrayList<>();
 
             public Node(int value) {
                 this.value = value;
@@ -42,12 +42,11 @@ public class Solution {
         public static class Edge {
             Node u;
             Node v;
-            int weight;
+            int weight = 6;
 
-            public Edge(Node u, Node v, int weight) {
+            public Edge(Node u, Node v) {
                 this.u = u;
                 this.v = v;
-                this.weight = weight;
             }
 
             @Override
@@ -74,42 +73,33 @@ public class Solution {
         }
 
         public void addEdge(int first, int second) {
-            Node u = findNodeWithValue(first);
-            Node v = findNodeWithValue(second);
+            Node u = nodes.get(first - 1);
+            Node v = nodes.get(second - 1);
 
             Edge e = findEdge(u, v);
+
             if (e == null) {
-                edges.add(new Edge(u, v, 6));
-                edges.add(new Edge(v, u, 6));
+                Edge e1 = new Edge(u, v);
+                edgeMap.put(u.value + "-" + v.value, e1);
+
+                Edge e2 = new Edge(v, u);
+                edgeMap.put(v.value + "-" + u.value, e2);
+
+                edges.add(e1);
+                edges.add(e2);
 
                 u.children.add(v);
                 v.children.add(u);
             }
         }
 
-        private Node findNodeWithValue(int value) {
-            return nodes
-                    .stream()
-                    .filter(node -> node.value == value)
-                    .findFirst()
-                    .orElse(null);
-        }
-
-        private int findEdgeWeight(Node parent, Node child) {
-            Edge e = findEdge(parent, child);
-            return e.weight;
-        }
-
         private Edge findEdge(Node parent, Node child) {
-            return edges
-                    .stream()
-                    .filter(e -> e.u.value == parent.value && e.v.value == child.value)
-                    .findFirst()
-                    .orElse(null);
+            String key = parent.value + "-" + child.value;
+            return edgeMap.keySet().contains(key) ? edgeMap.get(key) : null;
         }
 
         public int[] shortestReach(int nodeValue) {
-            Node origin = findNodeWithValue(nodeValue);
+            Node origin = nodes.get(nodeValue - 1);
             setShortestReaches(origin);
 
             List<Integer> shortestReaches = new ArrayList<>();
