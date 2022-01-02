@@ -2,6 +2,7 @@ package com.hackerrank.nearestclone;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Solution {
 
@@ -16,7 +17,7 @@ public class Solution {
      *
      */
 
-    public static class Node {
+    public static class Node implements Comparable<Node> {
         private boolean isVisited;
         private int nodeNumber;
         private long colorNumber;
@@ -40,9 +41,14 @@ public class Solution {
         public int hashCode() {
             return Objects.hash(nodeNumber, colorNumber);
         }
+
+        @Override
+        public int compareTo(Node that) {
+            return Integer.valueOf(this.nodeNumber).compareTo(Integer.valueOf(that.nodeNumber));
+        }
     }
 
-    private static List<Node> adjMatrix = new ArrayList<>();
+    private static List<Node> nodes = new ArrayList<>();
     private static Map<Long, List<Node>> nodesByColor = new HashMap<>();
     private static int shortestPath = -1;
 
@@ -61,17 +67,24 @@ public class Solution {
         Iterator<Node> iterator = targetColorNodes.iterator();
         while (iterator.hasNext()) {
             Node origin = iterator.next();
-            origin.isVisited = true;
 
-            Iterator<Node> edgeNodesIterator = origin.connections.iterator();
-            while (edgeNodesIterator.hasNext()) {
-                Node edgeNode = edgeNodesIterator.next();
-                edgeNode.isVisited = true;
-                recurse(edgeNode, targetColor, 1);
-                if (shortestPath == 1) {
-                    return shortestPath;
-                }
+            bfs(origin, targetColor);
+            if (shortestPath == 1) {
+                return shortestPath;
             }
+
+
+//            origin.isVisited = true;
+//
+//            Iterator<Node> edgeNodesIterator = origin.connections.iterator();
+//            while (edgeNodesIterator.hasNext()) {
+//                Node edgeNode = edgeNodesIterator.next();
+//                edgeNode.isVisited = true;
+//                recurse(edgeNode, targetColor, 1);
+//                if (shortestPath == 1) {
+//                    return shortestPath;
+//                }
+//            }
         }
         return shortestPath;
     }
@@ -94,11 +107,57 @@ public class Solution {
         }
     }
 
+    private static void bfs(Node origin, long targetColor) {
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        pq.add(origin);
+
+        List<Node> children = new ArrayList<>();
+
+        int minPath = 0;
+        while (true) {
+            while (!pq.isEmpty()) {
+                Node node = pq.remove();
+                if (!node.isVisited) {
+                    node.isVisited = true;
+                }
+
+                if (!node.equals(origin) && node.colorNumber == targetColor) {
+                    if (shortestPath == -1 || minPath < shortestPath) {
+                        shortestPath = minPath;
+                    }
+
+                    if (shortestPath == 1) {
+                        return;
+                    }
+                }
+                children.addAll(findAllChildren(node));
+            }
+
+            if (children.isEmpty()) {
+                break;
+            }
+
+            pq.addAll(children);
+            children = new ArrayList<>();
+            minPath++;
+        }
+    }
+
+    private static List<Node> findAllChildren(Node node) {
+        List<Node> unvisited = new ArrayList<>();
+        for (Node n : node.connections) {
+            if (!n.isVisited) {
+                unvisited.add(n);
+            }
+        }
+        return unvisited;
+    }
+
     private static void buildGraph(int graphNodes, long[] ids, int[] graphFrom, int[] graphTo) {
         for (int i = 0; i < graphNodes; i++) {
             long color = ids[i];
             Node node = new Node(i + 1, color);
-            adjMatrix.add(node);
+            nodes.add(node);
 
             if (nodesByColor.keySet().contains(color)) {
                 List<Node> nodes = nodesByColor.get(color);
@@ -114,8 +173,8 @@ public class Solution {
             int from = graphFrom[j];
             int to = graphTo[j];
 
-            Node fromNode = adjMatrix.get(from - 1);
-            Node toNode = adjMatrix.get(to - 1);
+            Node fromNode = nodes.get(from - 1);
+            Node toNode = nodes.get(to - 1);
 
             fromNode.connections.add(toNode);
             toNode.connections.add(fromNode);
