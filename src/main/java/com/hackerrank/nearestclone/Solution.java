@@ -109,11 +109,12 @@ public class Solution {
 
     private static void bfs(Node origin, long targetColor) {
         PriorityQueue<Node> pq = new PriorityQueue<>();
-        pq.add(origin);
 
+        origin.isVisited = true;
         List<Node> children = new ArrayList<>();
 
-        int minPath = 0;
+        int minPath = 1;
+        pq.addAll(origin.connections);
         while (true) {
             while (!pq.isEmpty()) {
                 Node node = pq.remove();
@@ -121,7 +122,7 @@ public class Solution {
                     node.isVisited = true;
                 }
 
-                if (!node.equals(origin) && node.colorNumber == targetColor) {
+                if (node.colorNumber == targetColor) {
                     if (shortestPath == -1 || minPath < shortestPath) {
                         shortestPath = minPath;
                     }
