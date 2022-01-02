@@ -60,7 +60,7 @@ public class Solution {
 
         List<Node> targetColorNodes = nodesByColor.get(targetColor);
 
-        if (targetColorNodes == null) {
+        if (targetColorNodes == null || targetColorNodes.isEmpty() || targetColorNodes.size() == 1) {
             return shortestPath;
         }
 
@@ -73,9 +73,7 @@ public class Solution {
                 return shortestPath;
             }
 
-
 //            origin.isVisited = true;
-//
 //            Iterator<Node> edgeNodesIterator = origin.connections.iterator();
 //            while (edgeNodesIterator.hasNext()) {
 //                Node edgeNode = edgeNodesIterator.next();
@@ -145,13 +143,7 @@ public class Solution {
     }
 
     private static List<Node> findAllChildren(Node node) {
-        List<Node> unvisited = new ArrayList<>();
-        for (Node n : node.connections) {
-            if (!n.isVisited) {
-                unvisited.add(n);
-            }
-        }
-        return unvisited;
+       return node.connections.stream().filter(n -> !n.isVisited).collect(Collectors.toList());
     }
 
     private static void buildGraph(int graphNodes, long[] ids, int[] graphFrom, int[] graphTo) {
