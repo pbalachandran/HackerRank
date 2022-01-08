@@ -1,43 +1,61 @@
 package com.hackerrank.counttriplets;
 
+import jdk.javadoc.internal.doclets.toolkit.util.ElementListWriter;
+
 import java.io.*;
-import java.math.*;
-import java.security.*;
-import java.text.*;
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.*;
-import java.util.regex.*;
 import java.util.stream.*;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 public class Solution {
 
+    public static class Element {
+        Integer index;
+
+        public Element(Integer index) {
+            this.index = index;
+        }
+    }
+
     static long countTriplets(List<Long> arr, long r) {
-        List<Long> list = new ArrayList<>();
-        for (Long element : arr) {
-            if (element != 0 && element % r == 0) {
-                list.add(element);
+        Map<Long, List<Element>> map = new HashMap<>();
+        for (int i = 0; i < arr.size(); i++) {
+            Long key = arr.get(i);
+            if (map.get(key) == null) {
+                List<Element> list = new ArrayList<>();
+                list.add(new Element(i));
+                map.put(key, list);
+            } else {
+                List<Element> list = map.get(key);
+                list.add(new Element(i));
+                map.put(key, list);
             }
         }
 
         long tripletCount = 0;
-        long first, second, third;
-        for(int i=0;i<list.size();i++) {
-            first = list.get(i);
-                for (int j = i + 1; j < list.size(); j++) {
-                    second = list.get(j);
-                    if (second / first == r) {
-                        for (int k = j + 1; k < list.size(); k++) {
-                            third = list.get(k);
+        for (int i = 0; i < arr.size(); i++) {
+            Long k1 = arr.get(i);
+            Integer k1Index = i;
 
-                            if (third / second == r) {
-                                tripletCount++;
-                            }
+            Long k2 = k1 * r;
+            if (map.get(k2) != null) {
+                List<Element> k2List = map.get(k2).stream().filter(element -> element.index > k1Index).collect(toList());
+                if (!k2List.isEmpty()) {
+                    int k2Count = k2List.size();
+
+                    Long k3 = k2 * r;
+
+                    Integer k3Index = k2List.get(0).index;
+                    if (map.get(k3) != null) {
+                        List<Element> k3List = map.get(k3).stream().filter(element -> element.index > k3Index).collect(toList());
+                        if (!k3List.isEmpty()) {
+                            int k3Count = k3List.size();
+                            System.out.println(i + "-" + "(" + k2Count + "," + k3Count + ")");
+                            tripletCount += (k2Count * k3Count);
                         }
                     }
+                }
             }
         }
         return tripletCount;
