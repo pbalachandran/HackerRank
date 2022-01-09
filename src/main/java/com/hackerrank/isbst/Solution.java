@@ -15,7 +15,7 @@ public class Solution {
     boolean checkBST(Node root) {
 
         if (root.left != null) {
-            if (root.left.data <= root.data) {
+            if (root.left.data < root.data) {
                 if (isDuplicate(root.left.data)) {
                     return false;
                 }
