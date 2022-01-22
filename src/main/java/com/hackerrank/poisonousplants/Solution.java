@@ -14,34 +14,46 @@ import static java.util.stream.Collectors.*;
 
 class Result {
     public static int poisonousPlants(List<Integer> p) {
-        LinkedList<Integer> living = new LinkedList<>();
+        Stack<Integer> living = new Stack<>();
         living.addAll(p);
         return filterPlants(living);
     }
 
-    public static int filterPlants(LinkedList<Integer> living) {
+    public static int filterPlants(Stack<Integer> living) {
         int days = 0;
-        while (true) {
-            boolean isModified = false;
-            LinkedList<Integer> alive = new LinkedList<>();
 
-            Integer current = living.remove();
-            alive.add(current);
-            while (!living.isEmpty()) {
-                Integer next = living.remove();
-                if (current >= next) {
-                    alive.add(next);
-                } else {
-                    isModified = true;
-                }
-                current = next;
+        int cIndex = living.size() - 1;
+        int pIndex = cIndex - 1;
+
+        boolean isModified = false;
+        int current, previous;
+        while (true) {
+            current = living.get(cIndex);
+            previous = living.get(pIndex);
+            if (current > previous) {
+                isModified = true;
+                living.removeElementAt(cIndex);
+                cIndex = pIndex;
+                pIndex = pIndex - 1;
+            } else {
+                cIndex--;
+                pIndex--;
             }
 
-            if (!isModified) {
-                break;
-            } else {
-                days++;
-                living = alive;
+            if (cIndex == 0) {
+                if (isModified) {
+                    days++;
+
+                    if (living.size() == 1) {
+                        break;
+                    } else {
+                        cIndex = living.size() - 1;
+                        pIndex = cIndex - 1;
+                        isModified = false;
+                    }
+                } else {
+                    break;
+                }
             }
         }
         return days;
