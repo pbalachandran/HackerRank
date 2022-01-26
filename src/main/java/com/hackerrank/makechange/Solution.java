@@ -2,10 +2,10 @@ package com.hackerrank.makechange;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Make change for a given amount, using available denominations.
+ * Make "optimal" change for a given amount, using 1c, 5c, 10c, or 25c
+ * Simple Dynamic Programming Problem
  */
 public class Solution {
 
